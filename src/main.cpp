@@ -36,6 +36,13 @@ AsyncWebServer server(80);
 // The value will quickly become too large for an int to store
 unsigned long previousMillis = 0;    // will store last time DHT was updated
 
+// Set your Static IP address
+IPAddress local_IP(192, 168, 1, 184);
+// Set your Gateway IP address
+IPAddress gateway(192, 168, 1, 1);
+
+IPAddress subnet(255, 255, 0, 0);
+
 // Updates DHT readings every 10 seconds
 const long interval = 10000;  
 
