@@ -7,7 +7,7 @@
 #include <ESP8266WiFi.h>
 
 // Replace with your network credentials
-const char* ssid     = "WLAN-BEF106";
+const char* ssid     = "WLAN-BEF106_EXT";
 const char* password = "cocacola";
 
 // Set web server port number to 80
@@ -108,9 +108,9 @@ void loop(){
             // CSS to style the on/off buttons 
             // Feel free to change the background-color and font-size attributes to fit your preferences
             client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-            client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
+            client.println(".button { background-color: #195B6AFF; border: none; color: white; padding: 16px 40px;");
             client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-            client.println(".button2 {background-color: #77878A;}</style></head>");
+            client.println(".button2 {background-color: #77878A88;}</style></head>");
             
             // Web Page Heading
             client.println("<body><h1>Green v1.0</h1>");
