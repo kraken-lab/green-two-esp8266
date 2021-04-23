@@ -156,6 +156,23 @@ void loop(){
             } else {
               client.println("<p><a href=\"/4/off\"><button class=\"button button2\">OFF</button></a></p>");
             }
+
+            // Display getTemperature button
+            client.println(
+              "<p>Temperature: </p>"
+              " "
+              + _tempInteger
+              + _tempFraction);
+            client.println("<p><a href=\"/temp\"><button class=\"button\">get temperature</button></a></p>");
+
+            // Display getHumidity button
+            client.println(
+              "<p>Humidity: </p>"
+              " "
+              + _tempInteger
+              + _tempFraction);
+            client.println("<p><a href=\"/temp\"><button class=\"button\">get temperature</button></a></p>");
+
             client.println("</body></html>");
             
             // The HTTP response ends with another blank line
