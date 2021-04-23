@@ -31,6 +31,15 @@ unsigned long previousTime = 0;
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 
+// Set your Static IP address
+IPAddress local_IP(192, 168, 2, 184);
+// Set your Gateway IP address
+IPAddress gateway(192, 168, 2, 1);
+
+IPAddress subnet(255, 255, 255, 0);
+IPAddress primaryDNS(8, 8, 8, 8);   //optional
+IPAddress secondaryDNS(8, 8, 4, 4); //optional
+
 void setup() {
   Serial.begin(115200);
   // Initialize the output variables as outputs
@@ -39,6 +48,12 @@ void setup() {
   // Set outputs to LOW
   digitalWrite(output5, LOW);
   digitalWrite(output4, LOW);
+
+  // Configures static IP address
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("STA Failed to configure");
+  }
+
 
   delay(5000);
   // Connect to Wi-Fi network with SSID and password
