@@ -8,6 +8,7 @@
 
 #include "SoftwareSerial.h"
 #include "serial.h"
+
 // Replace with your network credentials
 const char* ssid     = "WLAN-BEF106_EXT";
 const char* password = "cocacola";
@@ -39,6 +40,12 @@ const int _serialTx = 1;
 
 // pins for serial communication
 SoftwareSerial s(_serialRx,_serialTx);
+
+// data from arduino
+int _tempInteger = 1;
+int _tempFraction = 1;
+int _humidity = 0;
+
 // Set your Static IP address
 IPAddress local_IP(192, 168, 2, 184);
 // Set your Gateway IP address
@@ -148,7 +155,6 @@ void loop(){
             } else {
               client.println("<p><a href=\"/5/off\"><button class=\"button button2\">OFF</button></a></p>");
             } 
-               
             // Display current state, and ON/OFF buttons for GPIO 4  
             client.println("<p>GPIO 4 - State " + output4State + "</p>");
             // If the output4State is off, it displays the ON button       
