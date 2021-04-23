@@ -6,6 +6,7 @@
 // Load Wi-Fi library
 #include <ESP8266WiFi.h>
 
+#include "SoftwareSerial.h"
 #include "serial.h"
 // Replace with your network credentials
 const char* ssid     = "WLAN-BEF106_EXT";
