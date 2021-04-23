@@ -32,6 +32,12 @@ unsigned long previousTime = 0;
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 
+// Rx and Tx pins
+const int _serialRx = 3;
+const int _serialTx = 1;
+
+// pins for serial communication
+SoftwareSerial s(_serialRx,_serialTx);
 // Set your Static IP address
 IPAddress local_IP(192, 168, 2, 184);
 // Set your Gateway IP address
@@ -43,6 +49,8 @@ IPAddress secondaryDNS(8, 8, 4, 4); //optional
 
 void setup() {
   Serial.begin(115200);
+  // serial connection for communication with arduino uno
+  s.begin(9600);
   // Initialize the output variables as outputs
   pinMode(output5, OUTPUT);
   pinMode(output4, OUTPUT);
