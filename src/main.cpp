@@ -84,7 +84,13 @@ String getHumidity() {
   return String(humidity);
 }
 
-// Replaces placeholder with LED state value
+String getSoilMoisture(int sensorNumber) {
+  float soilMoisture = random(200,700);
+  Serial.println(soilMoisture);
+  return String(soilMoisture);
+}
+
+// Replaces placeholder 
 String processor(const String& var){
   Serial.println(var);
   if (var == "TEMPERATURE"){
@@ -92,7 +98,10 @@ String processor(const String& var){
   }
   else if (var == "HUMIDITY"){
     return getHumidity();
-  } 
+  }
+  else if (var == "SOILMOISTURE-1") {
+    return getSoilMoisture(0);
+  }
 }
 
 void setup() {
@@ -143,6 +152,10 @@ void setup() {
   
   server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", getHumidity().c_str());
+  });
+
+  server.on("/soilmoisture-1", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send_P(200, "text/plain", getSoilMoisture(0).c_str());
   });
 
   // Start server
