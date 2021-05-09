@@ -45,7 +45,10 @@ const int _serialRx = 3;
 const int _serialTx = 1;
 
 // pins for serial communication
-SoftwareSerial s(_serialRx,_serialTx);
+SoftwareSerial uno(_serialRx,_serialTx);
+
+// delimiter for serial communication
+const char DELIMITTER = ':';
 
 // data from arduino
 int _tempInteger = 1;
@@ -73,8 +76,14 @@ int random(int min, int max) //range : [min, max]
 }
 
 String getTemperature() {
-  float temperature = random(5, 35);
-  Serial.println(temperature);
+  String temperature = "not available";
+  //Serial.println(temperature);
+
+  if(uno.available()) {
+    uno.write("CMD_TEMP");
+    String temperature = uno.readStringUntil(DELIMITTER);
+  }
+
   return String(temperature);
 }
 
@@ -90,26 +99,26 @@ String getSoilMoisture(int sensorNumber) {
   return String(soilMoisture);
 }
 
-// Replaces placeholder 
-String processor(const String& var){
-  Serial.println(var);
-  if (var == "TEMPERATURE"){
-    return getTemperature();
-  }
-  else if (var == "HUMIDITY"){
-    return getHumidity();
-  }
-  else if (var == "SOILMOISTURE-1") {
-    return getSoilMoisture(0);
-  }
-}
+// // Replaces placeholder 
+// String processor(const String& var){
+//   Serial.println(var);
+//   if (var == "TEMPERATURE"){
+//     return getTemperature();
+//   }
+//   else if (var == "HUMIDITY"){
+//     return getHumidity();
+//   }
+//   else if (var == "SOILMOISTURE-1") {
+//     return getSoilMoisture(0);
+//   }
+// }
 
 void setup() {
   // serial port for debugging purposes
   Serial.begin(115200);
 
   // serial connection for communication with arduino uno
-  s.begin(9600);
+  uno.begin(9600);
 
   // Initialize SPIFFS
   if(!LittleFS.begin()){
