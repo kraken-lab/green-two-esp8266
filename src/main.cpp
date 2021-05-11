@@ -1,6 +1,6 @@
 /*********
-  Rui Santos
-  Complete project details at http://randomnerdtutorials.com  
+  kraken-lab
+  async webserver
 *********/
 
 // Load Wi-Fi library
