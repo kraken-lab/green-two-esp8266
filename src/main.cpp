@@ -13,7 +13,10 @@
 #include "LittleFS.h"
 
 #include "SoftwareSerial.h"
-#include "serial.h"
+#include "commands.h"
+#include "main.h"
+
+#define SERIAL_SPEED 9600
 
 // Replace with your network credentials
 const char* ssid     = "WLAN-BEF106_EXT";
@@ -24,14 +27,6 @@ AsyncWebServer server(80);
 
 // Variable to store the HTTP request
 String header;
-
-// Auxiliar variables to store the current output state
-String output5State = "off";
-String output4State = "off";
-
-// Assign output variables to GPIO pins
-const int output5 = 5;
-const int output4 = 4;
 
 // Current time
 unsigned long currentTime = millis();
@@ -49,6 +44,11 @@ SoftwareSerial uno(_serialRx,_serialTx);
 
 // delimiter for serial communication
 const char DELIMITTER = ':';
+
+const byte numChars = 32;
+char receivedChars[numChars];
+
+boolean newData = false;
 
 // data from arduino
 int _tempInteger = 1;
@@ -75,21 +75,81 @@ int random(int min, int max) //range : [min, max]
   return min + rand() % (( max + 1 ) - min);
 }
 
+void recvWithStartEndMarkers() {
+    static boolean recvInProgress = false;
+    static byte ndx = 0;
+    char startMarker = '<';
+    char endMarker = '>';
+    char rc;
+
+    while (uno.available() > 0 ) {
+        rc = uno.read();
+
+        if (recvInProgress == true) {
+            if (rc != endMarker) {
+                receivedChars[ndx] = rc;
+                ndx++;
+                if (ndx >= numChars) {
+                    ndx = numChars - 1;
+                }
+            }
+            else {
+                receivedChars[ndx] = '\0'; // terminate the string
+                recvInProgress = false;
+                ndx = 0;
+                newData = true;
+                break;
+            }
+        }
+
+        else if (rc == startMarker) {
+            recvInProgress = true;
+        }
+    }
+}
+
+void showNewData() {
+    if (newData == true) {
+        Serial.print("This just in ... ");
+        Serial.println(receivedChars);
+        newData = false;
+    }
+}
+
+void sendWithStartEndMarkers(String data) {
+  data = addStartEndMarkers(data);
+  uno.write(data.c_str());
+}
+
+String addStartEndMarkers(String input) {
+  return "<"+input+">";
+}
+
+String checkUnoData() {
+
+    String receivedString = receivedChars;
+    Serial.println("data: "+receivedString);
+
+    return receivedString;
+}
+
 String getTemperature() {
   String temperature = "not available";
-  //Serial.println(temperature);
-
-  if(uno.available()) {
-    uno.write("CMD_TEMP");
-    String temperature = uno.readStringUntil(DELIMITTER);
-  }
+  
+  sendWithStartEndMarkers(CMD_TEMP);
+  recvWithStartEndMarkers();
+  temperature = checkUnoData();
 
   return String(temperature);
 }
 
 String getHumidity() {
-  float humidity = random(30,95);
-  Serial.println(humidity);
+  String humidity = "not available";
+
+  sendWithStartEndMarkers(CMD_HUM);
+  recvWithStartEndMarkers();
+  humidity = checkUnoData();
+  
   return String(humidity);
 }
 
@@ -99,26 +159,28 @@ String getSoilMoisture(int sensorNumber) {
   return String(soilMoisture);
 }
 
-// // Replaces placeholder 
-// String processor(const String& var){
-//   Serial.println(var);
-//   if (var == "TEMPERATURE"){
-//     return getTemperature();
-//   }
-//   else if (var == "HUMIDITY"){
-//     return getHumidity();
-//   }
-//   else if (var == "SOILMOISTURE-1") {
-//     return getSoilMoisture(0);
-//   }
-// }
+// Replaces placeholder 
+String processor(const String& var){
+  Serial.println(var);
+  if (var == "TEMPERATURE"){
+    return getTemperature();
+  }
+  else if (var == "HUMIDITY"){
+    return getHumidity();
+  }
+  else if (var == "SOILMOISTURE-1") {
+    return getSoilMoisture(0);
+  }
+}
 
 void setup() {
   // serial port for debugging purposes
-  Serial.begin(115200);
+  Serial.begin(SERIAL_SPEED);
+  while (!Serial) { // wait till Serial
+  }
 
   // serial connection for communication with arduino uno
-  uno.begin(9600);
+  uno.begin(SERIAL_SPEED);
 
   // Initialize SPIFFS
   if(!LittleFS.begin()){
