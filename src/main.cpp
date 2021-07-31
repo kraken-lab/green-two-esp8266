@@ -19,7 +19,7 @@
 #define SERIAL_SPEED 9600
 
 // Replace with your network credentials
-const char* ssid     = "WLAN-BEF106_EXT";
+const char* ssid     = "WLAN-BEF106";
 const char* password = "cocacola";
 
 // Create AsyncWebServer object on port 80
